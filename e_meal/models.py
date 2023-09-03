@@ -14,6 +14,16 @@ class Meal(models.Model):
         default=0.0)
     created = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)
+    preps = models.ManyToManyField("MealPrep", related_name="preps", through="MealRelationship")
+
+
+class MealRelationship(models.Model):
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    meal = models.ForeignKey("Meal", on_delete=models.CASCADE)
+    mealPrep = models.ForeignKey("MealPrep", on_delete=models.CASCADE)
+    count = models.IntegerField(default=0)
+    created = models.DateTimeField(auto_now_add=True)
+    updated = models.DateTimeField(auto_now=True)
 
 
 class MealPrep(models.Model):
@@ -28,6 +38,16 @@ class MealPrep(models.Model):
         default=0.0)
     times = models.IntegerField(default=0)
     isUsedUp = models.BooleanField(default=False)
+    created = models.DateTimeField(auto_now_add=True)
+    updated = models.DateTimeField(auto_now=True)
+    recipe = models.ManyToManyField("Ingredient", related_name="recipe", through="RecipeRelationship")
+
+
+class RecipeRelationship(models.Model):
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    mealPrep = models.ForeignKey("MealPrep", on_delete=models.CASCADE)
+    ingredient = models.ForeignKey("Ingredient", on_delete=models.CASCADE)
+    count = models.IntegerField(default=0)
     created = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)
 
