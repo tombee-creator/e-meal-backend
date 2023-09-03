@@ -1,3 +1,4 @@
+import json
 from rest_framework import serializers
 from .models import *
 
@@ -20,9 +21,27 @@ class MealSerializer(serializers.ModelSerializer):
     def to_representation_meal_prep(self, prep, meal):
         ser = MealPrepSerializer(prep)
         ret = ser.data
-        relationship = MealRelationship.objects.get(meal=meal, mealPrep=prep)
+        relationship = MealRelationship.objects.get(meal=meal, meal_prep=prep)
         ret["used_count"] = relationship.count
         return ret
+
+    def save(self, **kwargs):
+        initial_data = self.initial_data
+        instance = super().save(**kwargs)
+        prep_data = json.loads(initial_data["preps"])
+        if prep_data != None:
+            self.save_prep_data(instance, prep_data)
+        return instance
+
+    def save_prep_data(self, instance, prep_data):
+        ids = set(map(lambda prep: prep["id"], prep_data))
+        for id in ids:
+            items = list(filter(lambda item: item["id"] == id, prep_data))
+            item = items[-1]
+            ser = MealPrepSerializer(instance=MealPrep.objects.get(id=item["id"]), data=item)
+            if ser.is_valid():
+                obj = ser.save()
+                MealRelationship.objects.create(meal=instance, meal_prep=obj, count=len(items))
 
 
 class MealPrepSerializer(serializers.ModelSerializer):
@@ -36,7 +55,28 @@ class MealPrepSerializer(serializers.ModelSerializer):
             'id': instance.user.id,
             'email': instance.user.email,
         }
+        relationships = MealRelationship.objects.filter(meal_prep=instance)
+        ret["used_count"] = sum(map(lambda relationship: relationship.count, relationships))
         return ret
+
+    def save(self, **kwargs):
+        initial_data = self.initial_data
+        instance = super().save(**kwargs)
+        recipe_data = json.loads(initial_data["recipe"])
+        if recipe_data != None:
+            self.save_recipe_data(instance, recipe_data)
+        return instance
+
+    def save_recipe_data(self, instance, recipe_data):
+        ids = set(map(lambda recipe: recipe["id"], recipe_data))
+        for id in ids:
+            items = list(filter(lambda item: item["id"] == id, recipe_data))
+            item = items[-1]
+            ser = IngredientSerializer(instance=Ingredient.objects.get(id=item["id"]), data=item)
+            if ser.is_valid():
+                obj = ser.save()
+                RecipeRelationship.objects.create(meal_prep=instance, ingredient=obj, count=len(items))
+            
 
 class IngredientSerializer(serializers.ModelSerializer):
     class Meta:
@@ -49,4 +89,6 @@ class IngredientSerializer(serializers.ModelSerializer):
             'id': instance.user.id,
             'email': instance.user.email,
         }
+        relationships = RecipeRelationship.objects.filter(ingredient=instance)
+        ret["used_count"] = sum(map(lambda relationship: relationship.count, relationships))
         return ret
