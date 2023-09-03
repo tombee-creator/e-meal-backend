@@ -91,11 +91,11 @@ WSGI_APPLICATION = 'e_meal_backend.wsgi.application'
 DATABASES = {
      'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': 'e_meal',
-        'USER': 'django',
-        'PASSWORD': 'DnRzk2my',
-        'HOST': 'localhost',
-        'PORT': '5432',
+        'NAME': os.environ.get("DB_NAME"),
+        'USER': os.environ.get("DB_USERNAME"),
+        'PASSWORD': os.environ.get("DB_PASSWORD"),
+        'HOST': os.environ.get("DB_HOST"),
+        'PORT': os.environ.get("DB_PORT"),
     }
 }
 
