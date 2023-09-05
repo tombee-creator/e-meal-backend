@@ -9,11 +9,11 @@ from firebase_admin import auth
 from firebase_admin import credentials
 from rest_framework import authentication
 
-from e_meal_backend.settings import GOOGLE_CREDENTIALS
+from e_meal_backend.settings import GOOGLE_APPLICATION_CREDENTIALS
 
 from .exceptions import *
 
-with open(GOOGLE_CREDENTIALS) as f:
+with open(GOOGLE_APPLICATION_CREDENTIALS) as f:
     cred = credentials.Certificate(json.load(f))
 
 default_app = firebase_admin.initialize_app(cred)
