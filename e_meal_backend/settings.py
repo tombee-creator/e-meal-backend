@@ -36,6 +36,7 @@ if DEBUG:
 
 ALLOWED_HOSTS = ['*']
 
+GOOGLE_CREDENTIALS = os.environ.get('GOOGLE_CREDENTIALS')
 
 # Application definition
 
