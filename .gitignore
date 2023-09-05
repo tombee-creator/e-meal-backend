@@ -6,6 +6,7 @@ db-volumes/
 db.sqlite3
 
 .env
+.envrc
 
 key.json
 migrations/
