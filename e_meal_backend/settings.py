@@ -11,15 +11,14 @@ https://docs.djangoproject.com/en/4.2/ref/settings/
 """
 
 import os
-from dotenv import load_dotenv
 from pathlib import Path
 
-load_dotenv()
+import environ
+
+env = environ.Env()
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
-
-AUTH_USER_MODEL = 'firebase_authentication.User'
 
 FIREBASE_PATH = os.path.join(BASE_DIR, 'key.json')
 
@@ -30,7 +29,10 @@ FIREBASE_PATH = os.path.join(BASE_DIR, 'key.json')
 SECRET_KEY = os.environ.get("DJANGO_SECRET_KEY")
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = os.environ.get('DEBUG', False)
+
+if DEBUG:
+    env.read_env(os.path.join(BASE_DIR, '.env'))
 
 ALLOWED_HOSTS = ['*']
 
@@ -46,7 +48,6 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'rest_framework',
     'firebase_admin',
-    'firebase_authentication',
     'e_meal',
 ]
 
@@ -58,13 +59,12 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'firebase_authentication.authentication.FirebaseAuthMiddleware',
 ]
 
 REST_FRAMEWORK = {
-    "DEFAULT_AUTHENTICATION_CLASSES": (
-        'firebase_authentication.authentication.FirebaseAuthentication',
-    ),
+    "DEFAULT_AUTHENTICATION_CLASSES": [
+        'e_meal.authentication.FirebaseAuthentication'
+    ]
 }
 
 ROOT_URLCONF = 'e_meal_backend.urls'
@@ -89,14 +89,7 @@ WSGI_APPLICATION = 'e_meal_backend.wsgi.application'
 
 
 DATABASES = {
-     'default': {
-        'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': os.environ.get("DB_NAME"),
-        'USER': os.environ.get("DB_USERNAME"),
-        'PASSWORD': os.environ.get("DB_PASSWORD"),
-        'HOST': os.environ.get("DB_HOST"),
-        'PORT': os.environ.get("DB_PORT"),
-    }
+    'default': env.db()
 }
 
 
