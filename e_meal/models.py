@@ -2,9 +2,11 @@ import uuid
 
 from django.db import models
 
+from django.contrib.auth.models import User
+
 class Meal(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-    user = models.ForeignKey('firebase_authentication.User', on_delete=models.CASCADE)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
     comment = models.CharField(max_length=1024)
     url = models.URLField(blank=True)
     cost = models.FloatField(
@@ -28,7 +30,7 @@ class MealRelationship(models.Model):
 
 class MealPrep(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-    user = models.ForeignKey('firebase_authentication.User', on_delete=models.CASCADE)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
     name = models.CharField(max_length=1024)
     url = models.URLField(blank=True)
     cost = models.FloatField(
@@ -54,7 +56,7 @@ class RecipeRelationship(models.Model):
 
 class Ingredient(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-    user = models.ForeignKey('firebase_authentication.User', on_delete=models.CASCADE)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
     name = models.CharField(max_length=1024)
     url = models.URLField(blank=True)
     cost = models.FloatField(
