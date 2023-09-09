@@ -2,11 +2,20 @@ import uuid
 
 from django.db import models
 
-from django.contrib.auth.models import User
+from django.contrib.auth.models import AbstractUser
+
+
+class FirebaseUser(AbstractUser):
+    USERNAME_FIELD = 'firebase_uid'
+    
+    firebase_uid = models.CharField(primary_key=True, max_length=128, db_index=True, unique=True)
+    class Meta(AbstractUser.Meta):
+        swappable = "AUTH_USER_MODEL"
+
 
 class Meal(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    user = models.ForeignKey(FirebaseUser, on_delete=models.CASCADE)
     comment = models.CharField(max_length=1024)
     url = models.URLField(blank=True)
     cost = models.FloatField(
@@ -30,7 +39,7 @@ class MealRelationship(models.Model):
 
 class MealPrep(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    user = models.ForeignKey(FirebaseUser, on_delete=models.CASCADE)
     name = models.CharField(max_length=1024)
     url = models.URLField(blank=True)
     cost = models.FloatField(
@@ -56,7 +65,7 @@ class RecipeRelationship(models.Model):
 
 class Ingredient(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    user = models.ForeignKey(FirebaseUser, on_delete=models.CASCADE)
     name = models.CharField(max_length=1024)
     url = models.URLField(blank=True)
     cost = models.FloatField(

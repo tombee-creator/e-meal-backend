@@ -3,7 +3,6 @@ import json
 
 import firebase_admin
 from django.conf import settings
-from django.contrib.auth.models import User
 from django.utils import timezone
 from firebase_admin import auth
 from firebase_admin import credentials
@@ -12,6 +11,7 @@ from rest_framework import authentication
 from e_meal_backend.settings import GOOGLE_APPLICATION_CREDENTIALS
 
 from .exceptions import *
+from .models import FirebaseUser
 
 with open(GOOGLE_APPLICATION_CREDENTIALS) as f:
     cred = credentials.Certificate(json.load(f))
@@ -37,10 +37,11 @@ class FirebaseAuthentication(authentication.BaseAuthentication):
 
         try:
             uid = decoded_token.get("uid")
+            email = decoded_token.get("email")
         except Exception:
             raise FirebaseError()
 
-        user, created = User.objects.get_or_create(username=uid)
+        user, created = FirebaseUser.objects.get_or_create(firebase_uid=uid, email=email)
         user.created = timezone.localtime()
 
         return (user, None)

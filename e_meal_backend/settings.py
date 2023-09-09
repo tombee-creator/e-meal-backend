@@ -36,6 +36,8 @@ if DEBUG:
 
 ALLOWED_HOSTS = ['*']
 
+AUTH_USER_MODEL = 'e_meal.FirebaseUser'
+
 GOOGLE_APPLICATION_CREDENTIALS = os.environ.get('GOOGLE_APPLICATION_CREDENTIALS')
 
 # Application definition
