@@ -10,7 +10,7 @@ class MealSerializer(serializers.ModelSerializer):
     def to_representation(self, instance):
         ret = super(MealSerializer, self).to_representation(instance)
         ret['user'] = {
-            'id': instance.user.id,
+            'username': instance.user.username,
             'email': instance.user.email,
         }
         ret['preps'] = list(map(
@@ -52,7 +52,7 @@ class MealPrepSerializer(serializers.ModelSerializer):
     def to_representation(self, instance):
         ret = super(MealPrepSerializer, self).to_representation(instance)
         ret['user'] = {
-            'id': instance.user.id,
+            'username': instance.user.username,
             'email': instance.user.email,
         }
         relationships = MealRelationship.objects.filter(meal_prep=instance)
@@ -86,7 +86,7 @@ class IngredientSerializer(serializers.ModelSerializer):
     def to_representation(self, instance):
         ret = super(IngredientSerializer, self).to_representation(instance)
         ret['user'] = {
-            'id': instance.user.id,
+            'username': instance.user.username,
             'email': instance.user.email,
         }
         relationships = RecipeRelationship.objects.filter(ingredient=instance)
