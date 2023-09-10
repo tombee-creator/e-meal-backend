@@ -4,17 +4,17 @@ from .models import *
 from .serializers import *
 
 class MealViewSet(viewsets.ModelViewSet):
-    queryset = Meal.objects.all()
+    queryset = Meal.objects.all().order_by("-created")
     serializer_class = MealSerializer
     permission_classes = [IsAuthenticated]
 
 class MealPrepViewSet(viewsets.ModelViewSet):
-    queryset = MealPrep.objects.all()
+    queryset = MealPrep.objects.all().order_by("-created")
     serializer_class = MealPrepSerializer
     permission_classes = [IsAuthenticated]
 
 
 class IngredientViewSet(viewsets.ModelViewSet):
-    queryset = Ingredient.objects.all()
+    queryset = Ingredient.objects.all().order_by("-created")
     serializer_class = IngredientSerializer
     permission_classes = [IsAuthenticated]
