@@ -23,6 +23,5 @@ from e_meal.views import *
 
 router = DefaultRouter()
 router.register(r'recipes', MealViewSet, basename='meals')
-router.register(r'preps', MealPrepViewSet, basename='preps')
 router.register(r'ingredients', IngredientViewSet, basename='ingredients')
 urlpatterns = router.urls

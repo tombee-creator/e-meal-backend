@@ -25,45 +25,28 @@ class Meal(models.Model):
         default=0.0)
     created = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)
-    preps = models.ManyToManyField("MealPrep", related_name="preps", through="MealRelationship")
+    menu = models.ManyToManyField("Ingredient", related_name="preps", through="MenuRelationship")
 
 
-class MealRelationship(models.Model):
+class MenuRelationship(models.Model):
     id = models.CharField(max_length=26, primary_key=True, default=ULID, editable=False)
-    meal = models.ForeignKey("Meal", on_delete=models.CASCADE)
-    meal_prep = models.ForeignKey("MealPrep", on_delete=models.CASCADE)
-    count = models.IntegerField(default=0)
-    created = models.DateTimeField(auto_now_add=True)
-    updated = models.DateTimeField(auto_now=True)
-
-
-class MealPrep(models.Model):
-    id = models.CharField(max_length=26, primary_key=True, default=ULID, editable=False)
-    user = models.ForeignKey(FirebaseUser, on_delete=models.CASCADE)
-    name = models.CharField(max_length=1024)
-    url = models.URLField(blank=True)
-    cost = models.FloatField(
-        verbose_name='',
-        blank=True,
-        null=True,
-        default=0.0)
-    times = models.IntegerField(default=0)
-    is_used_up = models.BooleanField(default=False)
-    created = models.DateTimeField(auto_now_add=True)
-    updated = models.DateTimeField(auto_now=True)
-    recipe = models.ManyToManyField("Ingredient", related_name="recipe", through="RecipeRelationship")
-
-
-class RecipeRelationship(models.Model):
-    id = models.CharField(max_length=26, primary_key=True, default=ULID, editable=False)
-    meal_prep = models.ForeignKey("MealPrep", on_delete=models.CASCADE)
-    ingredient = models.ForeignKey("Ingredient", on_delete=models.CASCADE)
+    meal = models.ForeignKey(
+        "Meal", 
+        on_delete=models.CASCADE)
+    ingredient = models.ForeignKey(
+        "Ingredient", 
+        on_delete=models.CASCADE)
     count = models.IntegerField(default=0)
     created = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)
 
 
 class Ingredient(models.Model):
+    CATEGORIES = (
+        (0, 'ingredient'),
+        (1, 'prep'),
+        (2, 'gift')
+    )
     id = models.CharField(max_length=26, primary_key=True, default=ULID, editable=False)
     user = models.ForeignKey(FirebaseUser, on_delete=models.CASCADE)
     name = models.CharField(max_length=1024)
@@ -75,5 +58,25 @@ class Ingredient(models.Model):
         default=0.0)
     times = models.IntegerField(default=0)
     is_used_up = models.BooleanField(default=False)
+    category = models.IntegerField(choices=CATEGORIES)
+    created = models.DateTimeField(auto_now_add=True)
+    updated = models.DateTimeField(auto_now=True)
+    recipe = models.ManyToManyField(
+        "Ingredient", 
+        related_name="recipe_set", 
+        through="RecipeRelationship")
+
+
+class RecipeRelationship(models.Model):
+    id = models.CharField(max_length=26, primary_key=True, default=ULID, editable=False)
+    prep = models.ForeignKey(
+        "Ingredient",
+        on_delete=models.CASCADE,
+        related_name="prep")
+    ingredient = models.ForeignKey(
+        "Ingredient",
+        on_delete=models.CASCADE,
+        related_name="ingredient")
+    count = models.IntegerField(default=0)
     created = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)

@@ -8,11 +8,6 @@ class MealViewSet(viewsets.ModelViewSet):
     serializer_class = MealSerializer
     permission_classes = [IsAuthenticated]
 
-class MealPrepViewSet(viewsets.ModelViewSet):
-    queryset = MealPrep.objects.all().order_by("-created")
-    serializer_class = MealPrepSerializer
-    permission_classes = [IsAuthenticated]
-
 
 class IngredientViewSet(viewsets.ModelViewSet):
     queryset = Ingredient.objects.all().order_by("-created")

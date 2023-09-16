@@ -19,9 +19,9 @@ class MealSerializer(serializers.ModelSerializer):
         return ret
 
     def to_representation_meal_prep(self, prep, meal):
-        ser = MealPrepSerializer(prep)
+        ser = IngredientSerializer(prep)
         ret = ser.data
-        relationship = MealRelationship.objects.get(meal=meal, meal_prep=prep)
+        relationship = MenuRelationship.objects.get(meal=meal, ingredient=prep)
         ret["used_count"] = relationship.count
         return ret
 
@@ -38,45 +38,11 @@ class MealSerializer(serializers.ModelSerializer):
         for id in ids:
             items = list(filter(lambda item: item["id"] == id, prep_data))
             item = items[-1]
-            ser = MealPrepSerializer(instance=MealPrep.objects.get(id=item["id"]), data=item)
+            ser = IngredientSerializer(instance=Ingredient.objects.get(id=item["id"]), data=item)
             if ser.is_valid():
                 obj = ser.save()
-                MealRelationship.objects.create(meal=instance, meal_prep=obj, count=len(items))
+                MenuRelationship.objects.create(meal=instance, ingredient=obj, count=len(items))
 
-
-class MealPrepSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = MealPrep
-        fields = '__all__'
-
-    def to_representation(self, instance):
-        ret = super(MealPrepSerializer, self).to_representation(instance)
-        ret['user'] = {
-            'username': instance.user.firebase_uid,
-            'email': instance.user.email,
-        }
-        relationships = MealRelationship.objects.filter(meal_prep=instance)
-        ret["used_count"] = sum(map(lambda relationship: relationship.count, relationships))
-        return ret
-
-    def save(self, **kwargs):
-        initial_data = self.initial_data
-        instance = super().save(**kwargs)
-        recipe_data = json.loads(initial_data["recipe"])
-        if recipe_data != None:
-            self.save_recipe_data(instance, recipe_data)
-        return instance
-
-    def save_recipe_data(self, instance, recipe_data):
-        for item in recipe_data:
-            ingredient = Ingredient.objects.get(id=item["ingredient"])
-            ingredient.is_used_up = item["is_used_up"] == 'true'
-            ingredient.save()
-            RecipeRelationship.objects.create(
-                meal_prep=instance, 
-                ingredient=ingredient, 
-                count=int(item["count"]))
-            
 
 class IngredientSerializer(serializers.ModelSerializer):
     class Meta:
