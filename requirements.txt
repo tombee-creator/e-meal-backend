@@ -7,6 +7,7 @@ charset-normalizer==3.2.0
 cryptography==41.0.3
 Django==4.2.4
 django-environ==0.11.2
+django-filter==23.2
 django-phonenumber-field==7.1.0
 django-phonenumbers==1.0.1
 djangorestframework==3.14.0
@@ -38,6 +39,7 @@ pycparser==2.21
 PyJWT==2.8.0
 pyparsing==3.1.1
 python-dotenv==1.0.0
+python-ulid==1.1.0
 pytz==2023.3
 requests==2.31.0
 rsa==4.9
