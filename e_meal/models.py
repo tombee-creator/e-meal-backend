@@ -14,7 +14,7 @@ class FirebaseUser(AbstractUser):
 
 
 class Meal(models.Model):
-    id = models.UUIDField(primary_key=True, default=ULID, editable=False)
+    id = models.CharField(max_length=26, primary_key=True, default=ULID, editable=False)
     user = models.ForeignKey(FirebaseUser, on_delete=models.CASCADE)
     comment = models.CharField(max_length=1024)
     url = models.URLField(blank=True)
@@ -29,7 +29,7 @@ class Meal(models.Model):
 
 
 class MealRelationship(models.Model):
-    id = models.UUIDField(primary_key=True, default=ULID, editable=False)
+    id = models.CharField(max_length=26, primary_key=True, default=ULID, editable=False)
     meal = models.ForeignKey("Meal", on_delete=models.CASCADE)
     meal_prep = models.ForeignKey("MealPrep", on_delete=models.CASCADE)
     count = models.IntegerField(default=0)
@@ -38,7 +38,7 @@ class MealRelationship(models.Model):
 
 
 class MealPrep(models.Model):
-    id = models.UUIDField(primary_key=True, default=ULID, editable=False)
+    id = models.CharField(max_length=26, primary_key=True, default=ULID, editable=False)
     user = models.ForeignKey(FirebaseUser, on_delete=models.CASCADE)
     name = models.CharField(max_length=1024)
     url = models.URLField(blank=True)
@@ -55,7 +55,7 @@ class MealPrep(models.Model):
 
 
 class RecipeRelationship(models.Model):
-    id = models.UUIDField(primary_key=True, default=ULID, editable=False)
+    id = models.CharField(max_length=26, primary_key=True, default=ULID, editable=False)
     meal_prep = models.ForeignKey("MealPrep", on_delete=models.CASCADE)
     ingredient = models.ForeignKey("Ingredient", on_delete=models.CASCADE)
     count = models.IntegerField(default=0)
@@ -64,7 +64,7 @@ class RecipeRelationship(models.Model):
 
 
 class Ingredient(models.Model):
-    id = models.UUIDField(primary_key=True, default=ULID, editable=False)
+    id = models.CharField(max_length=26, primary_key=True, default=ULID, editable=False)
     user = models.ForeignKey(FirebaseUser, on_delete=models.CASCADE)
     name = models.CharField(max_length=1024)
     url = models.URLField(blank=True)

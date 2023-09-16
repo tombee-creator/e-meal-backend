@@ -68,14 +68,11 @@ class MealPrepSerializer(serializers.ModelSerializer):
         return instance
 
     def save_recipe_data(self, instance, recipe_data):
-        ids = set(map(lambda recipe: recipe["id"], recipe_data))
-        for id in ids:
-            items = list(filter(lambda item: item["id"] == id, recipe_data))
-            item = items[-1]
-            ser = IngredientSerializer(instance=Ingredient.objects.get(id=item["id"]), data=item)
-            if ser.is_valid():
-                obj = ser.save()
-                RecipeRelationship.objects.create(meal_prep=instance, ingredient=obj, count=len(items))
+        for item in recipe_data:
+            ingredient = Ingredient.objects.get(id=item["ingredient"])
+            ingredient.is_used_up = item["is_used_up"] == 'true'
+            ingredient.save()
+            RecipeRelationship.objects.create(meal_prep=instance, ingredient=ingredient, count=int(item["count"]))
             
 
 class IngredientSerializer(serializers.ModelSerializer):
