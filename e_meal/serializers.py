@@ -27,21 +27,23 @@ class MealSerializer(serializers.ModelSerializer):
 
     def save(self, **kwargs):
         initial_data = self.initial_data
+        print(initial_data)
         instance = super().save(**kwargs)
-        prep_data = json.loads(initial_data["preps"])
-        if prep_data != None:
-            self.save_prep_data(instance, prep_data)
+        recipe_data = json.loads(initial_data["menu"])
+        if recipe_data != None:
+            self.save_recipe_data(instance, recipe_data)
         return instance
 
-    def save_prep_data(self, instance, prep_data):
-        ids = set(map(lambda prep: prep["id"], prep_data))
-        for id in ids:
-            items = list(filter(lambda item: item["id"] == id, prep_data))
-            item = items[-1]
-            ser = IngredientSerializer(instance=Ingredient.objects.get(id=item["id"]), data=item)
-            if ser.is_valid():
-                obj = ser.save()
-                MenuRelationship.objects.create(meal=instance, ingredient=obj, count=len(items))
+    def save_recipe_data(self, meal, recipe_data):
+        for data in recipe_data:
+            ingredient = Ingredient.objects.get(pk=data["ingredient"])
+            print(ingredient)
+            ingredient.is_used_up = data['is_used_up']
+            ingredient.save()
+            MenuRelationship.objects.create(
+                meal=meal,
+                ingredient=ingredient,
+                count=data["count"])
 
 
 class IngredientSerializer(serializers.ModelSerializer):
@@ -58,3 +60,21 @@ class IngredientSerializer(serializers.ModelSerializer):
         relationships = RecipeRelationship.objects.filter(ingredient=instance)
         ret["used_count"] = sum(map(lambda relationship: relationship.count, relationships))
         return ret
+
+    def save(self, **kwargs):
+        initial_data = self.initial_data
+        instance = super().save(**kwargs)
+        recipe_data = json.loads(initial_data["recipe"])
+        if recipe_data != None:
+            self.save_recipe_data(instance, recipe_data)
+        return instance
+
+    def save_recipe_data(self, prep, recipe_data):
+        for data in recipe_data:
+            ingredient = Ingredient.objects.get(pk=data["ingredient"])
+            ingredient.is_used_up = data['is_used_up']
+            ingredient.save()
+            RecipeRelationship.objects.create(
+                prep=prep,
+                ingredient=ingredient,
+                count=data["count"])

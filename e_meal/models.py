@@ -4,7 +4,6 @@ from django.db import models
 
 from django.contrib.auth.models import AbstractUser
 
-
 class FirebaseUser(AbstractUser):
     USERNAME_FIELD = 'firebase_uid'
     
@@ -25,7 +24,7 @@ class Meal(models.Model):
         default=0.0)
     created = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)
-    menu = models.ManyToManyField("Ingredient", related_name="preps", through="MenuRelationship")
+    preps = models.ManyToManyField("Ingredient", related_name="preps", through="MenuRelationship")
 
 
 class MenuRelationship(models.Model):
@@ -47,6 +46,7 @@ class Ingredient(models.Model):
         (1, 'prep'),
         (2, 'gift')
     )
+    
     id = models.CharField(max_length=26, primary_key=True, default=ULID, editable=False)
     user = models.ForeignKey(FirebaseUser, on_delete=models.CASCADE)
     name = models.CharField(max_length=1024)
