@@ -72,7 +72,10 @@ class MealPrepSerializer(serializers.ModelSerializer):
             ingredient = Ingredient.objects.get(id=item["ingredient"])
             ingredient.is_used_up = item["is_used_up"] == 'true'
             ingredient.save()
-            RecipeRelationship.objects.create(meal_prep=instance, ingredient=ingredient, count=int(item["count"]))
+            RecipeRelationship.objects.create(
+                meal_prep=instance, 
+                ingredient=ingredient, 
+                count=int(item["count"]))
             
 
 class IngredientSerializer(serializers.ModelSerializer):
