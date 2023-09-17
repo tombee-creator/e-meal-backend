@@ -57,8 +57,10 @@ class IngredientSerializer(serializers.ModelSerializer):
             'username': instance.user.firebase_uid,
             'email': instance.user.email,
         }
-        relationships = RecipeRelationship.objects.filter(ingredient=instance)
-        ret["used_count"] = sum(map(lambda relationship: relationship.count, relationships))
+        recipes = RecipeRelationship.objects.filter(ingredient=instance)
+        menu = MenuRelationship.objects.filter(ingredient=instance)
+        ret["used_count"] = sum(map(lambda relationship: relationship.count, recipes)) \
+            + sum(map(lambda relationship: relationship.count, menu))
         return ret
 
     def save(self, **kwargs):
