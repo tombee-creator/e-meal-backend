@@ -27,7 +27,6 @@ class MealSerializer(serializers.ModelSerializer):
 
     def save(self, **kwargs):
         initial_data = self.initial_data
-        print(initial_data)
         instance = super().save(**kwargs)
         recipe_data = json.loads(initial_data["menu"])
         if recipe_data != None:
@@ -37,7 +36,6 @@ class MealSerializer(serializers.ModelSerializer):
     def save_recipe_data(self, meal, recipe_data):
         for data in recipe_data:
             ingredient = Ingredient.objects.get(pk=data["ingredient"])
-            print(ingredient)
             ingredient.is_used_up = data['is_used_up']
             ingredient.save()
             MenuRelationship.objects.create(
