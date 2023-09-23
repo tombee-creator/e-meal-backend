@@ -64,9 +64,10 @@ class IngredientSerializer(serializers.ModelSerializer):
     def save(self, **kwargs):
         initial_data = self.initial_data
         instance = super().save(**kwargs)
-        recipe_data = json.loads(initial_data["recipe"])
-        if recipe_data != None:
-            self.save_recipe_data(instance, recipe_data)
+        if "recipe" in initial_data:
+            recipe_data = json.loads(initial_data["recipe"])
+            if recipe_data != None:
+                self.save_recipe_data(instance, recipe_data)
         return instance
 
     def save_recipe_data(self, prep, recipe_data):
