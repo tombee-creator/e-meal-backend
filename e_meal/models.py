@@ -25,6 +25,14 @@ class Meal(models.Model):
     created = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)
     preps = models.ManyToManyField("Ingredient", related_name="preps", through="MenuRelationship")
+    
+    def get_cost(self):
+        items = self.preps.all()
+        if len(items) == 0:
+            return self.cost
+        return sum(list(map(
+            lambda item: item.get_cost(), 
+            self.preps.all())))
 
 
 class MenuRelationship(models.Model):
@@ -65,7 +73,26 @@ class Ingredient(models.Model):
         "Ingredient", 
         related_name="recipe_set", 
         through="RecipeRelationship")
+    
+    def get_cost(self):
+        items = self.recipe.all()
+        if len(items) == 0:
+            return self.cost
 
+        # 使用済み回数を計算
+        used_count = sum(list(
+            map(lambda rel: rel.count, 
+            RecipeRelationship.objects.filter(prep=self))))
+        return sum(list(map(
+            lambda rel: rel.ingredient.get_cost() * used_count / rel.ingredient.get_all_used_count(),
+            RecipeRelationship.objects.filter(prep=self))))
+    
+    def get_all_used_count(self):
+        as_ingredient_count = sum(list(map(lambda rel: rel.count, 
+            RecipeRelationship.objects.filter(ingredient=self))))
+        as_prep_count = sum(list(map(lambda rel: rel.count, 
+            MenuRelationship.objects.filter(ingredient=self))))
+        return as_ingredient_count + as_prep_count
 
 class RecipeRelationship(models.Model):
     id = models.CharField(max_length=26, primary_key=True, default=ULID, editable=False)

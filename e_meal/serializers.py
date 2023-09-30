@@ -16,6 +16,7 @@ class MealSerializer(serializers.ModelSerializer):
         ret['preps'] = list(map(
             lambda prep: self.to_representation_meal_prep(prep, instance), 
             instance.preps.all()))
+        ret["cost"] = instance.get_cost()
         return ret
 
     def to_representation_meal_prep(self, prep, meal):
@@ -59,6 +60,7 @@ class IngredientSerializer(serializers.ModelSerializer):
         menu = MenuRelationship.objects.filter(ingredient=instance)
         ret["used_count"] = sum(map(lambda relationship: relationship.count, recipes)) \
             + sum(map(lambda relationship: relationship.count, menu))
+        ret["cost"] = instance.get_cost()
         return ret
 
     def save(self, **kwargs):
