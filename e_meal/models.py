@@ -31,8 +31,20 @@ class Meal(models.Model):
         if len(items) == 0:
             return self.cost
         return sum(list(map(
-            lambda item: item.get_cost(), 
+            lambda item: item.get_cost() * self.get_used_count(item) / 
+                self.get_all_used_count(item), 
             self.preps.all())))
+    
+    def get_used_count(self, item):
+        rel = MenuRelationship.objects.get(meal=self, ingredient=item)
+        return rel.count
+    
+    def get_all_used_count(self, ingredient):
+        as_ingredient_count = sum(list(map(lambda rel: rel.count, 
+            RecipeRelationship.objects.filter(ingredient=ingredient))))
+        as_prep_count = sum(list(map(lambda rel: rel.count, 
+            MenuRelationship.objects.filter(ingredient=ingredient))))
+        return as_ingredient_count + as_prep_count
 
 
 class MenuRelationship(models.Model):
