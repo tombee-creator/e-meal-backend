@@ -13,7 +13,7 @@ class MealViewSet(viewsets.ModelViewSet):
 
 
 class IngredientViewSet(viewsets.ModelViewSet):
-    queryset = Ingredient.objects.all().order_by("-created")
+    queryset = Ingredient.objects.all().order_by("created")
     serializer_class = IngredientSerializer
     permission_classes = [IsAuthenticated]
     filterset_class = IngredientFilter
