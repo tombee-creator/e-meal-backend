@@ -28,8 +28,11 @@ gunicorn==21.2.0
 httplib2==0.22.0
 idna==3.4
 msgpack==1.0.5
+numpy==1.26.0
+opencv-python==4.8.1.78
 packaging==23.1
 phonenumbers==8.13.19
+Pillow==10.0.1
 proto-plus==1.22.3
 protobuf==4.24.2
 psycopg==3.1.10
@@ -37,7 +40,9 @@ pyasn1==0.5.0
 pyasn1-modules==0.3.0
 pycparser==2.21
 PyJWT==2.8.0
+pyocr==0.8.5
 pyparsing==3.1.1
+pytesseract==0.3.10
 python-dotenv==1.0.0
 python-ulid==1.1.0
 pytz==2023.3
