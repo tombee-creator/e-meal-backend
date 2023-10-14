@@ -28,7 +28,7 @@ class ReceiptConvertView(APIView):
         return Response({
             "version": "1.0.0",
             "message": "hello, i'm e-Meal receipt converter api. \nnow, i am learning hard.\nif my output results confuse you, i and my developer feel sorry.\nplease excuse.",
-            "updated": "i can read japanese!! but it's not satisfied. i wanna learn more."
+            "updated_log": "i can read japanese!! but it's not enough and i'm not satisfied at all. i'd like to learn more."
         }, status=200)
         
     def post(self, request):
