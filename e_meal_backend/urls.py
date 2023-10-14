@@ -14,11 +14,17 @@ Including another URLconf
     1. Import the include() function: from django.urls import include, path
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
-from rest_framework.routers import DefaultRouter
+from django.urls import path
+from rest_framework.routers import SimpleRouter
 
 from e_meal.views import *
 
-router = DefaultRouter()
+router = SimpleRouter()
 router.register(r'recipes', MealViewSet, basename='meals')
 router.register(r'ingredients', IngredientViewSet, basename='ingredients')
-urlpatterns = router.urls
+
+urlpatterns = [
+    path('convert-recipe/', RecieptConvertView.as_view())
+]
+
+urlpatterns += router.urls

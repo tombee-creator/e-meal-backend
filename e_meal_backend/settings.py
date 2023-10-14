@@ -11,9 +11,10 @@ https://docs.djangoproject.com/en/4.2/ref/settings/
 """
 
 import os
-from pathlib import Path
-
 import environ
+import pytesseract
+
+from pathlib import Path
 
 env = environ.Env()
 
@@ -137,3 +138,6 @@ STATIC_URL = 'static/'
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+if not DEBUG:
+    pytesseract.pytesseract.tesseract_cmd = '/app/.apt/usr/bin/tesseract'

@@ -18,3 +18,9 @@ class FirebaseError(APIException):
     status_code = status.HTTP_500_INTERNAL_SERVER_ERROR
     default_detail = "The user provided with the auth token is not a valid Firebase user, it has no Firebase UID"
     default_code = "no_firebase_uid"
+
+
+class CantFindValidDataError(APIException):
+    status_code = status.HTTP_410_GONE
+    default_detail = "There is no valid data."
+    default_code = "cant_find_valid_data"
