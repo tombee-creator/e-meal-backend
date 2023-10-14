@@ -23,10 +23,19 @@ class IngredientViewSet(viewsets.ModelViewSet):
 
 
 # レシートをJSONに変換する
-class RecieptConvertView(APIView):
+class ReceiptConvertView(APIView):
+    def get(self, _):
+        return Response({
+            "version": "1.0.0",
+            "message": "hello, i'm e-Meal receipt converter api. \nnow, i am learning hard.\nif my output results confuse you, i and my developer feel sorry.\nplease excuse.",
+            "updated": "i can read japanese!! but it's not satisfied. i wanna learn more."
+        }, status=200)
+        
     def post(self, request):
         if("receipt" not in request.POST):
-            return Response("レシートの画像が必要です", status=406)
+            return Response({
+                'code': 'need_receipt'
+            }, status=406)
 
         try:
             service = ReceiptConvertService()
@@ -36,7 +45,7 @@ class RecieptConvertView(APIView):
         except CantFindValidDataError:
             return Response({
                 'code': 'cant_find_valid_data'
-                }, status=410)
+            }, status=410)
         except Exception as ex:
             return Response({
                 'code': 'developer_error',

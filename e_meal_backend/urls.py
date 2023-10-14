@@ -24,7 +24,7 @@ router.register(r'recipes', MealViewSet, basename='meals')
 router.register(r'ingredients', IngredientViewSet, basename='ingredients')
 
 urlpatterns = [
-    path('convert-recipe/', RecieptConvertView.as_view())
+    path('convert-recipe/', ReceiptConvertView.as_view())
 ]
 
 urlpatterns += router.urls
