@@ -29,8 +29,8 @@ class ReceiptConvertService:
         img = cv2.imdecode(jpg, cv2.IMREAD_COLOR)
         cv_image = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
         cv_image = cv2.GaussianBlur(cv_image, (5, 5), 2)
-        _, cv_image = cv2.threshold(cv_image, 0, 255, cv2.THRESH_OTSU)
-
+        _, cv_image = cv2.threshold(cv_image, 0, 255, cv2.THRESH_BINARY + cv2.THRESH_OTSU)
+        
         tools = pyocr.get_available_tools()
         tool = tools[0]
 
