@@ -47,6 +47,7 @@ class ReceiptConvertView(APIView):
                 'code': 'cant_find_valid_data'
             }, status=410)
         except Exception as ex:
+            print(ex)
             return Response({
                 'code': 'developer_error',
                 'message': ex
